@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="SendinBlue" translate="label" sortOrder="10">
+            <label>SendinBlue</label>
+        </tab>
+        <section id="config" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Configuration</label>
+            <tab>SendinBlue</tab>
+            <resource>JulienAnquetil_M2SendinBlue::JulienAnquetil_M2SendinBlue_configuration</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Configuration</label>
+                 <field id="api_key" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API KEY</label>
+                    <comment>The API KEY</comment>
+                </field>
+                <field id="list_id" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>List on SENDINBLUE</label>
+                    <source_model>JulienAnquetil\M2SendinBlue\Model\Config\Source\Listes</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,20 @@
+{
+  "name": "julienanquetil/magento2-module-m2sendinblue",
+  "description": "magento2 sendinblue extension",
+  "require": {
+    "php": "~7.0.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "JulienAnquetil\\M2SendinBlue\\": ""
+    }
+  }
+}

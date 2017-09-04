@@ -92,7 +92,7 @@ class CheckSync implements ObserverInterface
             $is_subscribed = 'false';
         }
 
-        $this->messageManager->addNoticeMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));
+        $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));
     }
 
 

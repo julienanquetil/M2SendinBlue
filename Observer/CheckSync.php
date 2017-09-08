@@ -70,7 +70,6 @@ class CheckSync implements ObserverInterface
 
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
-            $is_subscribed = 'true';
 
             //sync content with Sendinblue
             $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
@@ -84,12 +83,7 @@ class CheckSync implements ObserverInterface
                     "listid" => [$listId],
                 );
                 $result = $mailerApi->create_update_user($data);
-
             }
-
-        } else {
-            // Customer is not subscribed
-            $is_subscribed = 'false';
         }
 
         $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));

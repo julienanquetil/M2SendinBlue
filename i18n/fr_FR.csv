@@ -1,7 +1,8 @@
-"Sendinblue Contact List","Liste de contact Sendinblue"
+"Sendinblue Contact List","Selection de la liste de contact Sendinblue"
 "Welcome back beloved customer %1 !","Bienvenue  %1 !"
 SendinBlue,SendinBlue
 Configuration,Configuration
 "General Configuration","Configuration générale"
 "API KEY","Clé API"
 "List on SENDINBLUE","Liste de contact SENDINBLUE"
+"The API KEY","LA clé API disponnible sur votre backoffice SendInblue"

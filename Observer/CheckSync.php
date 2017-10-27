@@ -3,6 +3,7 @@
 namespace JulienAnquetil\M2SendinBlue\Observer;
 
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
+use JulienAnquetil\M2SendinBlue\Model\SendinBlueAutomation;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
@@ -65,7 +66,7 @@ class CheckSync implements ObserverInterface
         $customerEmail = $customer->getEmail();
         $customerName = $customer->getFirstname();
         $customerLastname = $customer->getLastname();
-
+        $customerId = $customer->getId();
         $checkSubscriber = $this->_subscriber->loadByEmail($customerEmail);
 
         if ($checkSubscriber->isSubscribed()) {
@@ -74,6 +75,7 @@ class CheckSync implements ObserverInterface
             //sync content with Sendinblue
             $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
+            $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');
             if (isset ($apikey) && isset($listId)) {
                 //connect to API
@@ -84,6 +86,18 @@ class CheckSync implements ObserverInterface
                 );
                 $result = $mailerApi->create_update_user($data);
             }
+
+        }
+
+        if (isset ($apikeyAutomation)){
+            $automationApi = new SendinBlueAutomation($apikeyAutomation);
+            $data = array();
+
+            $data['name'] = $customerName.' '.$customerLastname;
+            $data['email_id'] = $customerEmail;
+            $data['id'] = $customerId;
+
+            $automationApi->identify($data);
         }
 
         $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));

@@ -20,6 +20,13 @@
                     <source_model>JulienAnquetil\M2SendinBlue\Model\Config\Source\Listes</source_model>
                 </field>
             </group>
+            <group id="automation" translate="label" type="text" sortOrder="" showInDefault="" showInWebsite="" showInStore="">
+                <label>Marketing Automation</label>
+                <field id="automation_api_key">
+                    <label>MARKETING AUTOMATION API KEY</label>
+                    <comment>The marketing automation API KEY</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

@@ -20,8 +20,7 @@ class Transport extends \Zend_Mail_Transport_Smtp implements \Magento\Framework\
     )
 
     {
-        $this->_objectManager = $objectmanager;
-        $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+        $helper = $objectmanager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
 
         if (!$message instanceof \Zend_Mail) {
             throw new \InvalidArgumentException('The message should be an instance of \Zend_Mail');

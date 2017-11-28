@@ -27,6 +27,25 @@
                     <comment>The marketing automation API KEY</comment>
                 </field>
             </group>
+            <group id="smtp" translate="label" type="text" sortOrder="" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>SMTP Parameters</label>
+                <field id="smtp_host" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP HOST</label>
+                    <comment>SMTP HOST</comment>
+                </field>
+                <field id="smtp_login" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP LOGIN</label>
+                    <comment>SMTP LOGIN</comment>
+                </field>
+                <field id="smtp_pass" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP PASS</label>
+                    <comment>SMTP PASS</comment>
+                </field>
+                <field id="smtp_port" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP PORT</label>
+                    <comment>SMTP PORT</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

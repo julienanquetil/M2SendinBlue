@@ -46,7 +46,6 @@ class AfterPlaceOrder implements ObserverInterface
         $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
 
         $event = new SendinBlueAutomation($apikeyAutomation);
-
         $data = array();
         $data['name'] = 'order_succes';
         $data['order_id'] = $orderId;

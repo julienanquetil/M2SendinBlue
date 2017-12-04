@@ -5,6 +5,7 @@ use Magento\Framework\Mail\TransportInterface;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Exception\MailException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Phrase;
 
 class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
 {
@@ -52,7 +53,7 @@ class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
         try {
             parent::send($this->_message);
         } catch (\Exception $e) {
-            throw new \Magento\Framework\Exception\MailException(new \Magento\Framework\Phrase($e->getMessage()), $e);
+            throw new MailException(new Phrase($e->getMessage()), $e);
         }
     }
     

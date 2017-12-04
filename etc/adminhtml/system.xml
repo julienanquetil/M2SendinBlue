@@ -20,14 +20,14 @@
                     <source_model>JulienAnquetil\M2SendinBlue\Model\Config\Source\Listes</source_model>
                 </field>
             </group>
-            <group id="automation" translate="label" type="text" sortOrder="" showInDefault="" showInWebsite="" showInStore="">
+            <group id="automation" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Marketing Automation</label>
-                <field id="automation_api_key">
+                <field id="automation_api_key" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>MARKETING AUTOMATION API KEY</label>
                     <comment>The marketing automation API KEY</comment>
                 </field>
             </group>
-            <group id="smtp" translate="label" type="text" sortOrder="" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="smtp" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>SMTP Parameters</label>
                 <field id="smtp_host" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>SMTP HOST</label>

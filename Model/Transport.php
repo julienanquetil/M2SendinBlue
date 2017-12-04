@@ -1,8 +1,12 @@
 <?php
 
 namespace JulienAnquetil\M2SendinBlue\Model;
+use Magento\Framework\Mail\TransportInterface;
+use Magento\Framework\Mail\MessageInterface;
+use Magento\Framework\Exception\MailException;
+use Magento\Framework\ObjectManagerInterface;
 
-class Transport extends \Zend_Mail_Transport_Smtp implements \Magento\Framework\Mail\TransportInterface
+class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
 {
     /**
      * @var \Magento\Framework\Mail\MessageInterface
@@ -15,16 +19,16 @@ class Transport extends \Zend_Mail_Transport_Smtp implements \Magento\Framework\
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        \Magento\Framework\Mail\MessageInterface $message,
-        \Magento\Framework\ObjectManagerInterface $objectmanager
-    )
-
-    {
-        $helper = $objectmanager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+        MessageInterface $message,
+        ObjectManagerInterface $objectmanager
+    ) {
 
         if (!$message instanceof \Zend_Mail) {
             throw new \InvalidArgumentException('The message should be an instance of \Zend_Mail');
         }
+
+        $helper = $objectmanager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+
         $smtpHost= $helper->getGeneralConfig('smtp_host');
         $smtpConf = [
             'auth' => 'login',//auth type
@@ -50,5 +54,16 @@ class Transport extends \Zend_Mail_Transport_Smtp implements \Magento\Framework\
         } catch (\Exception $e) {
             throw new \Magento\Framework\Exception\MailException(new \Magento\Framework\Phrase($e->getMessage()), $e);
         }
+    }
+    
+    /**
+     * Get message
+     *
+     * @return \Magento\Framework\Mail\MessageInterface
+     * @since 100.2.0
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

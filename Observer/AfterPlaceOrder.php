@@ -2,6 +2,8 @@
 
 namespace JulienAnquetil\M2SendinBlue\Observer;
 
+use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
+use JulienAnquetil\M2SendinBlue\Model\SendinBlueAutomation;
 use Magento\Framework\Event\ObserverInterface;
 
 class AfterPlaceOrder implements ObserverInterface
@@ -24,8 +26,8 @@ class AfterPlaceOrder implements ObserverInterface
     public function __construct(
         \Magento\Sales\Model\Order $order,
         \Magento\Framework\ObjectManagerInterface $objectmanager
-    )
-    {
+    ) {
+    
         $this->order = $order;
         $this->_objectManager = $objectmanager;
     }
@@ -50,6 +52,5 @@ class AfterPlaceOrder implements ObserverInterface
         $data['order_id'] = $orderId;
         $data['amount'] = $orderTotal;
         $event->track($data);
-
     }
 }

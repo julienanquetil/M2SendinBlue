@@ -59,48 +59,28 @@ class CheckSync implements ObserverInterface
      *
      * @return void
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
         $event = $observer->getEvent();
-        $customer = $event->getCustomer();
-        $customerEmail = $customer->getEmail();
-        $customerName = $customer->getFirstname();
-        $customerLastname = $customer->getLastname();
-        $customerId = $customer->getId();
-        $checkSubscriber = $this->_subscriber->loadByEmail($customerEmail);
-
-        if ($checkSubscriber->isSubscribed()) {
-            // Customer is subscribed
-
-            //sync content with Sendinblue
+        $subscriber = $event->getDataObject();
+        $data = $subscriber->getData();
+        if ($data["subscriber_status"] === 1) {
+            $customerEmail = $data['subscriber_email'];
             $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
-            $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');
             if (isset ($apikey) && isset($listId)) {
                 //connect to API
                 $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
                 $data = array( "email" => $customerEmail,
-                    "attributes" => array("NOM"=>$customerName, "PRENOM"=>$customerLastname),
                     "listid" => [$listId],
                 );
                 $result = $mailerApi->create_update_user($data);
+                if ($result["code"]=='success') {
+                    $this->messageManager->addSuccessMessage(__('Thanks for your subscription !'));
+                }
             }
-
         }
-
-        if (isset ($apikeyAutomation)){
-            $automationApi = new SendinBlueAutomation($apikeyAutomation);
-            $data = array();
-
-            $data['name'] = $customerName.' '.$customerLastname;
-            $data['email_id'] = $customerEmail;
-            $data['id'] = $customerId;
-
-            $automationApi->identify($data);
-        }
-
-        $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));
     }
 
 

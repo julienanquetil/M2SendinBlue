@@ -1,6 +1,7 @@
 <?php
 
 namespace JulienAnquetil\M2SendinBlue\Model;
+
 use Magento\Framework\Mail\TransportInterface;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Exception\MailException;
@@ -12,12 +13,12 @@ class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
     /**
      * @var \Magento\Framework\Mail\MessageInterface
      */
-    protected $_message;
+    protected $message;
 
     /**
      * @param MessageInterface $message
-     * @param null $parameters
-     * @throws \InvalidArgumentException
+     * @param ObjectManagerInterface $objectmanager
+     * @internal param null $parameters
      */
     public function __construct(
         MessageInterface $message,
@@ -40,7 +41,7 @@ class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
         ];
 
         parent::__construct($smtpHost, $smtpConf);
-        $this->_message = $message;
+        $this->message = $message;
     }
 
     /**
@@ -51,7 +52,7 @@ class Transport extends \Zend_Mail_Transport_Smtp implements TransportInterface
     public function sendMessage()
     {
         try {
-            parent::send($this->_message);
+            parent::send($this->message);
         } catch (\Exception $e) {
             throw new MailException(new Phrase($e->getMessage()), $e);
         }

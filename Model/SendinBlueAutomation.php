@@ -25,8 +25,11 @@ class SendinBlueAutomation
         }
 
     }
+
     /**
      * Do CURL request with authorization
+     * @param $input
+     * @return mixed
      */
 
     private function do_request($input)
@@ -164,4 +167,3 @@ class SendinBlueAutomation
         }
     }
 }
-?>

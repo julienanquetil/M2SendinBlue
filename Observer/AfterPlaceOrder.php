@@ -2,9 +2,11 @@
 
 namespace JulienAnquetil\M2SendinBlue\Observer;
 
-use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlueAutomation;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Model\Order;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Event\Observer;
 
 class AfterPlaceOrder implements ObserverInterface
 {
@@ -21,32 +23,31 @@ class AfterPlaceOrder implements ObserverInterface
      * @param  \Magento\Sales\Model\Order $order
      * @param  \Magento\Framework\ObjectManagerInterface $objectmanager
      *
-     * @return void
      */
     public function __construct(
-        \Magento\Sales\Model\Order $order,
-        \Magento\Framework\ObjectManagerInterface $objectmanager
+        Order $order,
+        ObjectManagerInterface $objectmanager
     ) {
     
         $this->order = $order;
         $this->_objectManager = $objectmanager;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
         $orderId = $observer->getEvent()->getOrderIds();
         $order = $this->order->load($orderId);
         $orderTotal = $order->getGrandTotal();
 
         //get Order All Item
-        $itemCollection = $order->getItemsCollection();
-        $customer = $order->getCustomerId(); // using this id you can get customer name
+        //$itemCollection = $order->getItemsCollection();
+        //$customer = $order->getCustomerId(); // using this id you can get customer name
 
         $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
         $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
 
         $event = new SendinBlueAutomation($apikeyAutomation);
-        $data = array();
+        $data = [];
         $data['name'] = 'order_succes';
         $data['order_id'] = $orderId;
         $data['amount'] = $orderTotal;

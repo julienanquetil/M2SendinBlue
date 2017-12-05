@@ -1,10 +1,15 @@
 <?php
 
 namespace JulienAnquetil\M2SendinBlue\Observer;
+
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlueAutomation;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Newsletter\Model\Subscriber;
+use Magento\Framework\ObjectManagerInterface;
 
 class Newsletter implements ObserverInterface
 {
@@ -19,7 +24,7 @@ class Newsletter implements ObserverInterface
     /**
      * @var \Magento\Newsletter\Model\Subscriber
      */
-    protected $_subscriber;
+    protected $subscriber;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -34,17 +39,15 @@ class Newsletter implements ObserverInterface
      * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param  \Magento\Framework\ObjectManagerInterface $objectmanager
      *
-     * @return void
      */
     public function __construct(
-        \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Magento\Newsletter\Model\Subscriber $subscriber,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\ObjectManagerInterface $objectmanager
-    )
-    {
+        ManagerInterface $messageManager,
+        Subscriber $subscriber,
+        ScopeConfigInterface $scopeConfig,
+        ObjectManagerInterface $objectmanager
+    ) {
         $this->messageManager = $messageManager;
-        $this->_subscriber = $subscriber;
+        $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
         $this->_objectManager = $objectmanager;
     }
@@ -61,7 +64,6 @@ class Newsletter implements ObserverInterface
         $subscriberId = $observer->getEvent()->getSubscriber()->getId();
         $this->logger->notice('subscriber ID: ' . $subscriberId);
 
-
         $event = $observer->getEvent();
         $customer = $event->getSubscriber();
         $customerEmail = $customer->getSubscriberEmail();
@@ -72,27 +74,25 @@ class Newsletter implements ObserverInterface
 
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
-
             //sync content with Sendinblue
             $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
             $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');
-            if (isset ($apikey) && isset($listId)) {
+            if (isset($apikey) && isset($listId)) {
                 //connect to API
                 $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
-                $data = array( "email" => $customerEmail,
-                    "attributes" => array("NOM"=>$customerName, "PRENOM"=>$customerLastname),
+                $data = [ "email" => $customerEmail,
+                    "attributes" => ["NOM"=>$customerName, "PRENOM"=>$customerLastname],
                     "listid" => [$listId],
-                );
-                $result = $mailerApi->create_update_user($data);
+                ];
+                $mailerApi->create_update_user($data);
             }
-
         }
 
-        if (isset ($apikeyAutomation)){
+        if (isset($apikeyAutomation)) {
             $automationApi = new SendinBlueAutomation($apikeyAutomation);
-            $data = array();
+            $data = [];
 
             $data['name'] = $customerName.' '.$customerLastname;
             $data['email_id'] = $customerEmail;
@@ -103,5 +103,4 @@ class Newsletter implements ObserverInterface
 
         $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));
     }
-
 }

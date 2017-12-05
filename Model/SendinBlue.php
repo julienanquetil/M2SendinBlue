@@ -22,6 +22,11 @@ class SendinBlue
 
     /**
      * Do CURL request with authorization
+     * @param $resource
+     * @param $method
+     * @param $input
+     * @return mixed
+     * @throws \Exception
      */
     private function do_request($resource, $method, $input)
     {

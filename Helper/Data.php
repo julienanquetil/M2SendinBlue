@@ -15,11 +15,11 @@ class Data extends AbstractHelper
 
     const XML_PATH_SENDINBLUE = 'config/general/';
 
-    public function __construct(Context $context,
-                                ObjectManagerInterface $objectManager,
-                                StoreManagerInterface $storeManager
-    )
-    {
+    public function __construct(
+        Context $context,
+        ObjectManagerInterface $objectManager,
+        StoreManagerInterface $storeManager
+    ) {
         $this->objectManager = $objectManager;
         $this->storeManager = $storeManager;
         parent::__construct($context);
@@ -28,7 +28,9 @@ class Data extends AbstractHelper
     public function getConfigValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
-            $field, ScopeInterface::SCOPE_STORE, $storeId
+            $field,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -37,10 +39,11 @@ class Data extends AbstractHelper
         return $this->getConfigValue(self::XML_PATH_SENDINBLUE . $code, $storeId);
     }
 
-    public function getStoreConfig($field){
+    public function getStoreConfig($field)
+    {
         return $this->scopeConfig->getValue(
-            $field, ScopeInterface::SCOPE_STORE
+            $field,
+            ScopeInterface::SCOPE_STORE
         );
     }
-
 }

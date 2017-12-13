@@ -3,9 +3,6 @@
     <event name="customer_login">
         <observer name="JulienAnquetilwelcome_customer_login" instance="JulienAnquetil\M2SendinBlue\Observer\CheckSync"/>
     </event>
-    <event name="checkout_onepage_controller_success_action">
-        <observer name="checkout_controller_success_action" instance="JulienAnquetil\M2SendinBlue\Observer\AfterPlaceOrder"  />
-    </event>
     <event name="newsletter_subscriber_save_before">
         <observer name="JulienAnquetil_newsletter_subscriber" instance="JulienAnquetil\M2SendinBlue\Observer\Newsletter" />
     </event>

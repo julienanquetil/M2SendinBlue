@@ -4,6 +4,7 @@ namespace JulienAnquetil\M2SendinBlue\Observer;
 
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Event\Observer;
 
 /**
  * Customer login observer

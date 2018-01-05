@@ -3,7 +3,6 @@
 namespace JulienAnquetil\M2SendinBlue\Observer;
 
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
-use JulienAnquetil\M2SendinBlue\Model\SendinBlueAutomation;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -88,17 +87,6 @@ class Newsletter implements ObserverInterface
                 ];
                 $mailerApi->create_update_user($data);
             }
-        }
-
-        if (isset($apikeyAutomation)) {
-            $automationApi = new SendinBlueAutomation($apikeyAutomation);
-            $data = [];
-
-            $data['name'] = $customerName.' '.$customerLastname;
-            $data['email_id'] = $customerEmail;
-            $data['id'] = $customerId;
-
-            $automationApi->identify($data);
         }
 
         $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customer->getCustomer()));

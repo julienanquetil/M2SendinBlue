@@ -34,6 +34,11 @@ class CheckSync implements ObserverInterface
     protected $scopeConfig;
 
     /**
+     * @var \Magento\Customer\Model\Session $customerSession
+     */
+    protected $customerSession;
+
+    /**
      * Constructor
      *
      * @param ManagerInterface|\Magento\Framework\Message\ManagerInterface $messageManager Message Manager
@@ -46,12 +51,14 @@ class CheckSync implements ObserverInterface
         ManagerInterface $messageManager,
         Subscriber $subscriber,
         ScopeConfigInterface $scopeConfig,
-        ObjectManagerInterface $objectmanager
+        ObjectManagerInterface $objectmanager,
+        \Magento\Customer\Model\Session $customerSession
     ) {
         $this->messageManager = $messageManager;
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
         $this->objectManager = $objectmanager;
+        $this->_customerSession = $customerSession;
     }
 
     /**
@@ -62,26 +69,32 @@ class CheckSync implements ObserverInterface
      */
      public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        
-        $customerId = $observer->getEvent()->getCustomer()->getId();
-        $checkSubscriber = $this->subscriber->loadByCustomerId($customerId);
+        $customer = $this->_customerSession->getCustomer();
+        $customerEmail = $customer->getEmail();
+        $customerName = $customer->getFirstname();
+        $customerLastname = $customer->getLastname();
+        $customerId = $customer->getId();
 
-        if ($checkSubscriber) {
-            $customerEmail = $observer->getEvent()->getCustomer()->getEmail();
-            $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+        $checkSubscriber = $this->subscriber->loadByEmail($customerEmail);
+        if ($checkSubscriber->isSubscribed()) {
+            // Customer is subscribed
+            //sync content with Sendinblue
+            $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
+            $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');
             if (isset($apikey) && isset($listId)) {
                 //connect to API
                 $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
                 $data = [ "email" => $customerEmail,
+                    "attributes" => ["NOM"=>$customerName, "PRENOM"=>$customerLastname],
                     "listid" => [$listId],
                 ];
-                $result = $mailerApi->create_update_user($data);
-                if ($result["code"]=='success') {
-                    $this->messageManager->addSuccessMessage(__('Thanks for your subscription !'));
-                }
+                $mailerApi->create_update_user($data);
             }
+
+            $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customerName.' '.$customerLastname));
         }
+
     }
 }

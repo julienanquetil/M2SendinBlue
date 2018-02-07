@@ -60,13 +60,14 @@ class CheckSync implements ObserverInterface
      * @param Observer|\Magento\Framework\Event\Observer $observer Observer
      * @return void
      */
-    public function execute(Observer $observer)
+     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $event = $observer->getEvent();
-        $subscriber = $event->getDataObject();
-        $data = $subscriber->getData();
-        if ($data["subscriber_status"] === 1) {
-            $customerEmail = $data['subscriber_email'];
+        
+        $customerId = $observer->getEvent()->getCustomer()->getId();
+        $checkSubscriber = $this->subscriber->loadByCustomerId($customerId);
+
+        if ($checkSubscriber) {
+            $customerEmail = $observer->getEvent()->getCustomer()->getEmail();
             $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
             $listId = $helper->getGeneralConfig('list_id');

@@ -79,7 +79,7 @@ class CheckSync implements ObserverInterface
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
             //sync content with Sendinblue
-            $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+            $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
             $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');

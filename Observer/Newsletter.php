@@ -61,7 +61,6 @@ class Newsletter implements ObserverInterface
     public function execute(Observer $observer)
     {
         $subscriberId = $observer->getEvent()->getSubscriber()->getId();
-        $this->logger->notice('subscriber ID: ' . $subscriberId);
 
         $event = $observer->getEvent();
         $customer = $event->getSubscriber();

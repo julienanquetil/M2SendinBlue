@@ -13,7 +13,7 @@ class Data extends AbstractHelper
     protected $storeManager;
     protected $objectManager;
 
-    const XML_PATH_SENDINBLUE = 'config/general/';
+    const XML_PATH_SENDINBLUE = 'config/sendinblue/';
 
     public function __construct(
         Context $context,

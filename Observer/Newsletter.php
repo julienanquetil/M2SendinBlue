@@ -68,7 +68,7 @@ class Newsletter implements ObserverInterface
         $customerName = $customer->getFirstname();
         $customerLastname = $customer->getLastname();
         $customerId = $customer->getId();
-        $checkSubscriber = $this->_subscriber->loadByEmail($customerEmail);
+        $checkSubscriber = $this->subscriber->loadByEmail($customerEmail);
 
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed

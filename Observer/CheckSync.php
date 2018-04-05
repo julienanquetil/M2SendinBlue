@@ -5,7 +5,6 @@ namespace JulienAnquetil\M2SendinBlue\Observer;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Message\ManagerInterface;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -15,13 +14,6 @@ use Magento\Framework\ObjectManagerInterface;
  */
 class CheckSync implements ObserverInterface
 {
-
-    /**
-     * Message manager
-     *
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
-    protected $messageManager;
 
     /**
      * @var \Magento\Newsletter\Model\Subscriber
@@ -48,13 +40,11 @@ class CheckSync implements ObserverInterface
      *
      */
     public function __construct(
-        ManagerInterface $messageManager,
         Subscriber $subscriber,
         ScopeConfigInterface $scopeConfig,
         ObjectManagerInterface $objectmanager,
         \Magento\Customer\Model\Session $customerSession
     ) {
-        $this->messageManager = $messageManager;
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
         $this->objectManager = $objectmanager;
@@ -73,7 +63,6 @@ class CheckSync implements ObserverInterface
         $customerEmail = $customer->getEmail();
         $customerName = $customer->getFirstname();
         $customerLastname = $customer->getLastname();
-        $customerId = $customer->getId();
 
         $checkSubscriber = $this->subscriber->loadByEmail($customerEmail);
         if ($checkSubscriber->isSubscribed()) {
@@ -81,7 +70,6 @@ class CheckSync implements ObserverInterface
             //sync content with Sendinblue
             $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
             $apikey = $helper->getGeneralConfig('api_key');
-            $apikeyAutomation = $helper->getGeneralConfig('automation_api_key');
             $listId = $helper->getGeneralConfig('list_id');
             if (isset($apikey) && isset($listId)) {
                 //connect to API
@@ -92,9 +80,6 @@ class CheckSync implements ObserverInterface
                 ];
                 $mailerApi->create_update_user($data);
             }
-
-            $this->messageManager->addSuccessMessage(__('Welcome back beloved customer %1 !', $customerName.' '.$customerLastname));
         }
-
     }
 }

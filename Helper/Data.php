@@ -1,4 +1,14 @@
 <?php
+/**
+ * *
+ * M2SendinBlue
+ *
+ * @author      Julien Anquetil (https://www.julien-anquetil.com/)
+ * @copyright   Copyright 2018 Julien ANQUETIL (https://www.julien-anquetil.com/)
+ * @license     http://opensource.org/licenses/MIT MIT
+ *
+ *
+ */
 
 namespace JulienAnquetil\M2SendinBlue\Helper;
 

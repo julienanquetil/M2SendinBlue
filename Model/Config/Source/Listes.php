@@ -1,4 +1,14 @@
 <?php
+/**
+ * *
+ * M2SendinBlue
+ *
+ * @author      Julien Anquetil (https://www.julien-anquetil.com/)
+ * @copyright   Copyright 2018 Julien ANQUETIL (https://www.julien-anquetil.com/)
+ * @license     http://opensource.org/licenses/MIT MIT
+ *
+ *
+ */
 
 namespace JulienAnquetil\M2SendinBlue\Model\Config\Source;
 
@@ -8,13 +18,27 @@ use Magento\Framework\Option\ArrayInterface;
 
 class Listes implements ArrayInterface
 {
-
+    /**
+     * @var ObjectManagerInterface
+     */
     private $objectManager;
 
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $_logger;
+
+    /**
+     * Constructor.
+     * @param ObjectManagerInterface $objectmanager
+     * @param \Psr\Log\LoggerInterface $logger
+     */
     public function __construct(
-        ObjectManagerInterface $objectmanager
+        ObjectManagerInterface $objectmanager,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->objectManager = $objectmanager;
+        $this->_logger = $logger;
     }
 
     /**
@@ -29,32 +53,37 @@ class Listes implements ArrayInterface
 
         if (isset($apikey)) {
             /* connect to API */
-            $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
-            /* @TODO : verif si url ok */
-            /* get all list */
-            $data = [
-                "page" => 1,
-                "page_limit" => 50
-            ];
-            $result = $mailerApi->get_lists($data);
-            $returnList =[];
-            if ('success' === $result["code"]) {
-                foreach ($result as $key => $values) {
-                    if ($key == 'data') {
-                        foreach ($values as $index => $listes) {
-                            if ('lists' === $index) {
-                                foreach ($listes as $liste) {
-                                    $returnList[] = ['value' => $liste["id"],'label'=> $liste["name"]];
+            try{
+                //connect to API
+                $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
+                /* get all list */
+                $data = [
+                    "page" => 1,
+                    "page_limit" => 50
+                ];
+                $result = $mailerApi->get_lists($data);
+                $returnList =[];
+                if ('success' === $result["code"]) {
+                    foreach ($result as $key => $values) {
+                        if ($key == 'data') {
+                            foreach ($values as $index => $listes) {
+                                if ('lists' === $index) {
+                                    foreach ($listes as $liste) {
+                                        $returnList[] = ['value' => $liste["id"],'label'=> $liste["name"]];
+                                    }
                                 }
                             }
                         }
                     }
+                    // retour des listes
+                    return $returnList;
+                } else {
+                    /* ERROR */
+                    throw new \Exception('Unable to retrieve Sendinblue Contact List');
                 }
-            // retour des listes
-                return $returnList;
-            } else {
-                /* ERROR */
-                throw new \Exception('Unable to retrieve Sendinblue Contact List');
+            }
+            catch(\Exception $e){
+                $this->_logger->addError($e->getMessage());
             }
         } else {
             /* format return */

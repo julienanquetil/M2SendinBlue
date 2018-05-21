@@ -15,6 +15,7 @@ namespace JulienAnquetil\M2SendinBlue\Model\Config\Source;
 use Magento\Framework\ObjectManagerInterface;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\App\RequestInterface;
 
 class Listes implements ArrayInterface
 {
@@ -27,6 +28,11 @@ class Listes implements ArrayInterface
      * @var \Psr\Log\LoggerInterface
      */
     protected $_logger;
+    
+    /**
+    * @var \Magento\Framework\App\RequestInterface
+    */
+    protected $request;
 
     /**
      * Constructor.
@@ -35,9 +41,11 @@ class Listes implements ArrayInterface
      */
     public function __construct(
         ObjectManagerInterface $objectmanager,
+        RequestInterface $request,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->objectManager = $objectmanager;
+        $this->request = $request;
         $this->_logger = $logger;
     }
 
@@ -49,7 +57,8 @@ class Listes implements ArrayInterface
     {
 
         $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-        $apikey = $helper->getGeneralConfig('api_key');
+        $storeid = (int) $request->getParam('store');
+        $apikey = $helper->getGeneralConfig('api_key',$storeid);
 
         if (isset($apikey)) {
             /* connect to API */

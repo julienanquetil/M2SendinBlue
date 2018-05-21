@@ -18,6 +18,8 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Framework\ObjectManagerInterface;
+use Psr\Log\LoggerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Newsletter implements ObserverInterface
 {
@@ -35,7 +37,12 @@ class Newsletter implements ObserverInterface
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_logger;
+    protected $logger;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
 
     /**
      * Constructor
@@ -50,13 +57,15 @@ class Newsletter implements ObserverInterface
         Subscriber $subscriber,
         ScopeConfigInterface $scopeConfig,
         ObjectManagerInterface $objectmanager,
-        \Psr\Log\LoggerInterface $logger
+        StoreManagerInterface $storeManager,
+        LoggerInterface $logger
     )
     {
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
-        $this->_objectManager = $objectmanager;
-        $this->_logger = $logger;
+        $this->objectManager = $objectmanager;
+        $this->storeManager = $storeManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -75,13 +84,14 @@ class Newsletter implements ObserverInterface
         $customerName = $customer->getFirstname();
         $customerLastname = $customer->getLastname();
         $checkSubscriber = $this->subscriber->loadByEmail($customerEmail);
+        $storeId = $this->storeManager->getStore()->getWebsiteId();
 
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
             //sync content with Sendinblue
-            $helper = $this->_objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-            $apikey = $helper->getGeneralConfig('api_key');
-            $listId = $helper->getGeneralConfig('list_id');
+            $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
+            $apikey = $helper->getGeneralConfig('api_key',$storeId);
+            $listId = $helper->getGeneralConfig('list_id',$storeId);
             if (isset($apikey) && isset($listId)) {
                 try{
                     //connect to API
@@ -93,7 +103,7 @@ class Newsletter implements ObserverInterface
                     $mailerApi->create_update_user($data);
                 }
                 catch(\Exception $e){
-                    $this->_logger->addError($e->getMessage());
+                    $this->logger->addError($e->getMessage());
                 }
             }
         }

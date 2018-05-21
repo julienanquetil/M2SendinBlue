@@ -18,6 +18,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Customer login observer
@@ -43,7 +44,13 @@ class CheckSync implements ObserverInterface
     /**
      * @var LoggerInterface|\Psr\Log\LoggerInterface
      */
-    protected $_logger;
+    protected $logger;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
     /**
      * Constructor
      *
@@ -59,13 +66,15 @@ class CheckSync implements ObserverInterface
         ScopeConfigInterface $scopeConfig,
         ObjectManagerInterface $objectmanager,
         \Magento\Customer\Model\Session $customerSession,
+        StoreManagerInterface $storeManager,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
         $this->objectManager = $objectmanager;
-        $this->_customerSession = $customerSession;
-        $this->_logger = $logger;
+        $this->customerSession = $customerSession;
+        $this->storeManager = $storeManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -76,18 +85,19 @@ class CheckSync implements ObserverInterface
      */
      public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $customer = $this->_customerSession->getCustomer();
+        $customer = $this->customerSession->getCustomer();
         $customerEmail = $customer->getEmail();
         $customerName = $customer->getFirstname();
         $customerLastname = $customer->getLastname();
+        $storeId = $this->storeManager->getStore()->getWebsiteId();
 
         $checkSubscriber = $this->subscriber->loadByEmail($customerEmail);
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
             //sync content with Sendinblue
             $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-            $apikey = $helper->getGeneralConfig('api_key');
-            $listId = $helper->getGeneralConfig('list_id');
+            $apikey = $helper->getGeneralConfig('api_key', $storeId);
+            $listId = $helper->getGeneralConfig('list_id', $storeId);
             if (isset($apikey) && isset($listId)) {
                 try{
                     //connect to API
@@ -99,7 +109,7 @@ class CheckSync implements ObserverInterface
                     $mailerApi->create_update_user($data);
                 }
                 catch(\Exception $e){
-                    $this->_logger->addError($e->getMessage());
+                    $this->logger->addError($e->getMessage());
                 }
             }
         }

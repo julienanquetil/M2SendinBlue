@@ -57,7 +57,7 @@ class Listes implements ArrayInterface
     {
 
         $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-        $storeid = (int) $request->getParam('store');
+        $storeid = (int) $this->request->getParam('store');
         $apikey = $helper->getGeneralConfig('api_key',$storeid);
 
         if (isset($apikey)) {

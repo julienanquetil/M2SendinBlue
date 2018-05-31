@@ -18,7 +18,6 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Model\Session;
 use Psr\Log\LoggerInterface;
@@ -64,7 +63,6 @@ class CheckSync implements ObserverInterface
      * CheckSync constructor.
      * @param Subscriber $subscriber
      * @param ScopeConfigInterface $scopeConfig
-     * @param ObjectManagerInterface $objectmanager
      * @param Session $customerSession
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
@@ -72,7 +70,6 @@ class CheckSync implements ObserverInterface
     public function __construct(
         Subscriber $subscriber,
         ScopeConfigInterface $scopeConfig,
-        ObjectManagerInterface $objectmanager,
         Session $customerSession,
         StoreManagerInterface $storeManager,
         Data $helper,
@@ -80,7 +77,6 @@ class CheckSync implements ObserverInterface
     ) {
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
-        $this->objectManager = $objectmanager;
         $this->customerSession = $customerSession;
         $this->storeManager = $storeManager;
         $this->helper = $helper;
@@ -105,8 +101,8 @@ class CheckSync implements ObserverInterface
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
             //sync content with Sendinblue
-            $apikey = $this->helper>getGeneralConfig('api_key', $storeId);
-            $listId = $this->helper->getGeneralConfig('list_id', $storeId);
+            $apikey = $this->helper->getApiKey($storeId);
+            $listId = $this->helper->getListId($storeId);
             if (isset($apikey) && isset($listId)) {
                 try {
                     //connect to API
@@ -117,7 +113,7 @@ class CheckSync implements ObserverInterface
                     ];
                     $mailerApi->create_update_user($data);
                 } catch (\Exception $e) {
-                    $this->logger->addError($e->getMessage());
+                    $this->logger->error($e->getMessage());
                 }
             }
         }

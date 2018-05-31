@@ -20,33 +20,40 @@ use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
+    const XML_PATH_SENDINBLUE = 'config/sendinblue/';
+    const XML_PATH_APIKEY = 'config/sendinblue/api_key';
+    const XML_PATH_LISTID = 'config/sendinblue/list_id';
+
     /**
      * @var StoreManagerInterface
      */
     private $storeManager;
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
 
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
-    const XML_PATH_SENDINBLUE = 'config/sendinblue/';
 
+    /**
+     * Data constructor.
+     * @param Context $context
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
-        Context $context,
-        ObjectManagerInterface $objectManager,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Context $context
     ) {
-        $this->objectManager = $objectManager;
         $this->storeManager = $storeManager;
         parent::__construct($context);
     }
 
+    /**
+     * @param string $field
+     * @param null $storeId
+     * @return mixed
+     */
     public function getConfigValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
@@ -56,16 +63,43 @@ class Data extends AbstractHelper
         );
     }
 
+    /**
+     * @param string $code
+     * @param null $storeId
+     * @return mixed
+     */
     public function getGeneralConfig($code, $storeId = null)
     {
         return $this->getConfigValue(self::XML_PATH_SENDINBLUE . $code, $storeId);
     }
 
+    /**
+     * @param string $field
+     * @return mixed
+     */
     public function getStoreConfig($field)
     {
         return $this->scopeConfig->getValue(
             $field,
             ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * @param null $store
+     * @return mixed
+     */
+    public function getApiKey($store = null)
+    {
+        return $this->getConfigValue(self::XML_PATH_APIKEY,$store);
+    }
+
+    /**
+     * @param null $store
+     * @return mixed
+     */
+    public function getListId($store = null)
+    {
+        return $this->getConfigValue(self::XML_PATH_LISTID,$store);
     }
 }

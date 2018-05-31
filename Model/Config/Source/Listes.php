@@ -12,18 +12,14 @@
 
 namespace JulienAnquetil\M2SendinBlue\Model\Config\Source;
 
-use Magento\Framework\ObjectManagerInterface;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
+use JulienAnquetil\M2SendinBlue\Helper\Data;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Framework\App\RequestInterface;
 use Psr\Log\LoggerInterface;
 
 class Listes implements ArrayInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
 
     /**
      * @var \Psr\Log\LoggerInterface
@@ -36,19 +32,24 @@ class Listes implements ArrayInterface
     private $request;
 
     /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
      * Listes constructor.
-     * @param ObjectManagerInterface $objectmanager
      * @param RequestInterface $request
      * @param LoggerInterface $logger
+     * @param Data $helper
      */
     public function __construct(
-        ObjectManagerInterface $objectmanager,
         RequestInterface $request,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Data $helper
     ) {
-        $this->objectManager = $objectmanager;
         $this->request = $request;
         $this->logger = $logger;
+        $this->helper = $helper;
     }
 
     /**
@@ -58,9 +59,8 @@ class Listes implements ArrayInterface
     public function toOptionArray()
     {
 
-        $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-        $storeid = (int) $this->request->getParam('store');
-        $apikey = $helper->getGeneralConfig('api_key', $storeid);
+        $storeid = (int)$this->request->getParam('store');
+        $apikey = $this->helper->getApiKey($storeid);
 
         if (isset($apikey)) {
             /* connect to API */
@@ -73,14 +73,14 @@ class Listes implements ArrayInterface
                     "page_limit" => 50
                 ];
                 $result = $mailerApi->get_lists($data);
-                $returnList =[];
+                $returnList = [];
                 if ('success' === $result["code"]) {
                     foreach ($result as $key => $values) {
                         if ($key == 'data') {
                             foreach ($values as $index => $listes) {
                                 if ('lists' === $index) {
                                     foreach ($listes as $liste) {
-                                        $returnList[] = ['value' => $liste["id"],'label'=> $liste["name"]];
+                                        $returnList[] = ['value' => $liste["id"], 'label' => $liste["name"]];
                                     }
                                 }
                             }
@@ -90,10 +90,10 @@ class Listes implements ArrayInterface
                     return $returnList;
                 } else {
                     /* ERROR */
-                    throw new \Exception('Unable to retrieve Sendinblue Contact List');
+                    $this->logger->addError('Unable to retrieve Sendinblue Contact List');
                 }
             } catch (\Exception $e) {
-                $this->logger->addError($e->getMessage());
+                $this->logger->critical($e->getMessage());
             }
         } else {
             /* format return */

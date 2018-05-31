@@ -14,15 +14,15 @@ namespace JulienAnquetil\M2SendinBlue\Helper;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Config\Block\System\Config\Form\Field;
-use \Magento\Backend\Block\Template\Context;
-use \Magento\Framework\Module\ModuleListInterface;
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Module\ModuleListInterface;
 
 class Version extends Field
 {
 
-     /**
-      * @var \Magento\Framework\Module\ModuleListInterface
-      */
+    /**
+     * @var \Magento\Framework\Module\ModuleListInterface
+     */
     protected $moduleList;
 
     /**
@@ -33,11 +33,15 @@ class Version extends Field
     public function __construct(
         Context $context,
         ModuleListInterface $moduleList
-    ) {
-         $this->moduleList = $moduleList;
+    )
+    {
+        $this->moduleList = $moduleList;
         parent::__construct($context);
     }
 
+    /**
+     * @return string
+     */
     public function getExtensionVersion()
     {
         $moduleCode = 'JulienAnquetil_M2SendinBlue';

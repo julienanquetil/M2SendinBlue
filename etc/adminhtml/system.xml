@@ -11,13 +11,17 @@
             <resource>JulienAnquetil_M2SendinBlue::JulienAnquetil_M2SendinBlue_configuration</resource>
             <group id="sendinblue" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General Configuration</label>
-                 <field id="api_key" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_key" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API KEY</label>
                     <comment>The API KEY</comment>
                 </field>
                 <field id="list_id" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>List on SENDINBLUE</label>
                     <source_model>JulienAnquetil\M2SendinBlue\Model\Config\Source\Listes</source_model>
+                </field>
+                <field id="version" translate="label" type="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Version</label>
+                    <frontend_model>JulienAnquetil\M2SendinBlue\Helper\Version</frontend_model>
                 </field>
             </group>
         </section>

@@ -16,6 +16,7 @@ use Magento\Framework\ObjectManagerInterface;
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Framework\App\RequestInterface;
+use Psr\Log\LoggerInterface;
 
 class Listes implements ArrayInterface
 {
@@ -27,26 +28,27 @@ class Listes implements ArrayInterface
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_logger;
-    
-    /**
-    * @var \Magento\Framework\App\RequestInterface
-    */
-    protected $request;
+    private $logger;
 
     /**
-     * Constructor.
+     * @var \Magento\Framework\App\RequestInterface
+     */
+    private $request;
+
+    /**
+     * Listes constructor.
      * @param ObjectManagerInterface $objectmanager
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param RequestInterface $request
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ObjectManagerInterface $objectmanager,
         RequestInterface $request,
-        \Psr\Log\LoggerInterface $logger
+        LoggerInterface $logger
     ) {
         $this->objectManager = $objectmanager;
         $this->request = $request;
-        $this->_logger = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -58,11 +60,11 @@ class Listes implements ArrayInterface
 
         $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
         $storeid = (int) $this->request->getParam('store');
-        $apikey = $helper->getGeneralConfig('api_key',$storeid);
+        $apikey = $helper->getGeneralConfig('api_key', $storeid);
 
         if (isset($apikey)) {
             /* connect to API */
-            try{
+            try {
                 //connect to API
                 $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
                 /* get all list */
@@ -90,9 +92,8 @@ class Listes implements ArrayInterface
                     /* ERROR */
                     throw new \Exception('Unable to retrieve Sendinblue Contact List');
                 }
-            }
-            catch(\Exception $e){
-                $this->_logger->addError($e->getMessage());
+            } catch (\Exception $e) {
+                $this->logger->addError($e->getMessage());
             }
         } else {
             /* format return */

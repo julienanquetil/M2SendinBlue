@@ -14,10 +14,3 @@ This command enables the  module that make up the M2SendinBlue extension
 Once a module is enabled, the rest of Magento can "see" it. The last command tells Magento to actually install the module.
    
     php bin/magento setup:upgrade
-    
-Todo
-=======================
-
-- [ ] Test SMTP
-- [ ] New Automation API when released by Sendinblue
-- [X] Observer for newsletter subscriber only

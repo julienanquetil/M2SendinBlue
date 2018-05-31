@@ -20,8 +20,20 @@ use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
-    protected $storeManager;
-    protected $objectManager;
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
 
     const XML_PATH_SENDINBLUE = 'config/sendinblue/';
 

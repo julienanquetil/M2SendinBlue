@@ -13,12 +13,15 @@
 namespace JulienAnquetil\M2SendinBlue\Observer;
 
 use JulienAnquetil\M2SendinBlue\Model\SendinBlue;
+use JulienAnquetil\M2SendinBlue\Helper\Data;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Model\Session;
+use Psr\Log\LoggerInterface;
 
 /**
  * Customer login observer
@@ -29,51 +32,58 @@ class CheckSync implements ObserverInterface
     /**
      * @var \Magento\Newsletter\Model\Subscriber
      */
-    protected $subscriber;
+    private $subscriber;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $scopeConfig;
+    private $scopeConfig;
 
     /**
      * @var \Magento\Customer\Model\Session $customerSession
      */
-    protected $customerSession;
+    private $customerSession;
 
     /**
      * @var LoggerInterface|\Psr\Log\LoggerInterface
      */
-    protected $logger;
+    private $logger;
 
     /**
      * @var StoreManagerInterface
      */
-    protected $storeManager;
+    private $storeManager;
 
     /**
-     * Constructor
-     *
-     * @param ManagerInterface|\Magento\Framework\Message\ManagerInterface $messageManager Message Manager
-     * @param Subscriber|\Magento\Newsletter\Model\Subscriber $subscriber
-     * @param ScopeConfigInterface|\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param ObjectManagerInterface|\Magento\Framework\ObjectManagerInterface $objectmanager
-     * @param LoggerInterface|\Psr\Log\LoggerInterface $logger
-     *
+     * @var Data
+     */
+    private $helper;
+
+
+    /**
+     * CheckSync constructor.
+     * @param Subscriber $subscriber
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ObjectManagerInterface $objectmanager
+     * @param Session $customerSession
+     * @param StoreManagerInterface $storeManager
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Subscriber $subscriber,
         ScopeConfigInterface $scopeConfig,
         ObjectManagerInterface $objectmanager,
-        \Magento\Customer\Model\Session $customerSession,
+        Session $customerSession,
         StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger
+        Data $helper,
+        LoggerInterface $logger
     ) {
         $this->subscriber = $subscriber;
         $this->scopeConfig = $scopeConfig;
         $this->objectManager = $objectmanager;
         $this->customerSession = $customerSession;
         $this->storeManager = $storeManager;
+        $this->helper = $helper;
         $this->logger = $logger;
     }
 
@@ -83,7 +93,7 @@ class CheckSync implements ObserverInterface
      * @param Observer|\Magento\Framework\Event\Observer $observer Observer
      * @return void
      */
-     public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute()
     {
         $customer = $this->customerSession->getCustomer();
         $customerEmail = $customer->getEmail();
@@ -95,11 +105,10 @@ class CheckSync implements ObserverInterface
         if ($checkSubscriber->isSubscribed()) {
             // Customer is subscribed
             //sync content with Sendinblue
-            $helper = $this->objectManager->create('JulienAnquetil\M2SendinBlue\Helper\Data');
-            $apikey = $helper->getGeneralConfig('api_key', $storeId);
-            $listId = $helper->getGeneralConfig('list_id', $storeId);
+            $apikey = $this->helper>getGeneralConfig('api_key', $storeId);
+            $listId = $this->helper->getGeneralConfig('list_id', $storeId);
             if (isset($apikey) && isset($listId)) {
-                try{
+                try {
                     //connect to API
                     $mailerApi = new SendinBlue('https://api.sendinblue.com/v2.0', $apikey, '5000');
                     $data = [ "email" => $customerEmail,
@@ -107,8 +116,7 @@ class CheckSync implements ObserverInterface
                         "listid" => [$listId],
                     ];
                     $mailerApi->create_update_user($data);
-                }
-                catch(\Exception $e){
+                } catch (\Exception $e) {
                     $this->logger->addError($e->getMessage());
                 }
             }

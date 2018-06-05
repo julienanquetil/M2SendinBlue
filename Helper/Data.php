@@ -29,12 +29,10 @@ class Data extends AbstractHelper
      */
     private $storeManager;
 
-
     /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
-
 
     /**
      * Data constructor.
@@ -91,7 +89,7 @@ class Data extends AbstractHelper
      */
     public function getApiKey($store = null)
     {
-        return $this->getConfigValue(self::XML_PATH_APIKEY,$store);
+        return $this->getConfigValue(self::XML_PATH_APIKEY, $store);
     }
 
     /**
@@ -100,6 +98,6 @@ class Data extends AbstractHelper
      */
     public function getListId($store = null)
     {
-        return $this->getConfigValue(self::XML_PATH_LISTID,$store);
+        return $this->getConfigValue(self::XML_PATH_LISTID, $store);
     }
 }

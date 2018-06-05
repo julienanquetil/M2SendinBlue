@@ -46,7 +46,8 @@ class Listes implements ArrayInterface
         RequestInterface $request,
         LoggerInterface $logger,
         Data $helper
-    ) {
+    )
+    {
         $this->request = $request;
         $this->logger = $logger;
         $this->helper = $helper;
@@ -95,11 +96,11 @@ class Listes implements ArrayInterface
             } catch (\Exception $e) {
                 $this->logger->critical($e->getMessage());
             }
-        } else {
-            /* format return */
-            return [
-                ['value' => 0, 'label' => __('Sendinblue Contact List')]
-            ];
         }
+
+        return [
+            ['value' => 0, 'label' => __('Sendinblue Contact List')]
+        ];
+
     }
 }

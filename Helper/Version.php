@@ -23,7 +23,7 @@ class Version extends Field
     /**
      * @var \Magento\Framework\Module\ModuleListInterface
      */
-    protected $moduleList;
+    private $moduleList;
 
     /**
      * Version constructor.
@@ -33,8 +33,7 @@ class Version extends Field
     public function __construct(
         Context $context,
         ModuleListInterface $moduleList
-    )
-    {
+    ) {
         $this->moduleList = $moduleList;
         parent::__construct($context);
     }

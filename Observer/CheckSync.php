@@ -58,13 +58,13 @@ class CheckSync implements ObserverInterface
      */
     private $helper;
 
-
     /**
      * CheckSync constructor.
      * @param Subscriber $subscriber
      * @param ScopeConfigInterface $scopeConfig
      * @param Session $customerSession
      * @param StoreManagerInterface $storeManager
+     * @param Data $helper
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -89,7 +89,7 @@ class CheckSync implements ObserverInterface
      * @param Observer|\Magento\Framework\Event\Observer $observer Observer
      * @return void
      */
-    public function execute()
+    public function execute(Observer $observer)
     {
         $customer = $this->customerSession->getCustomer();
         $customerEmail = $customer->getEmail();

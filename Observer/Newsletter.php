@@ -18,7 +18,6 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Newsletter\Model\Subscriber;
-
 use Psr\Log\LoggerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -56,6 +55,7 @@ class Newsletter implements ObserverInterface
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
+     * @param Data $helper
      */
     public function __construct(
         Subscriber $subscriber,

@@ -5,7 +5,14 @@
   "homepage": "https://www.julien-anquetil.com/magento-2",
   "description": "magento2 Sendinblue Sync extension",
   "require": {
-    "php": "^7.0|^7.1"
+    "php": "^7.0|^7.1",
+    "ext-json" : "*",
+    "magento/module-newsletter" : "^100.2",
+    "magento/framework": "^101.0",
+    "magento/module-customer": "^101.0",
+    "magento/module-backend": "^100.2",
+    "magento/module-store": "^100.2",
+    "psr/log": "^1.1"
   },
   "autoload": {
     "files": [

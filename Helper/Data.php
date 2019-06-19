@@ -17,6 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Data extends AbstractHelper
 {
@@ -36,14 +37,17 @@ class Data extends AbstractHelper
 
     /**
      * Data constructor.
-     * @param Context $context
      * @param StoreManagerInterface $storeManager
+     * @param ScopeConfigInterface $scopeConfig
+     * @param Context $context
      */
     public function __construct(
         StoreManagerInterface $storeManager,
+        ScopeConfigInterface $scopeConfig,
         Context $context
     ) {
         $this->storeManager = $storeManager;
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($context);
     }
 
@@ -56,7 +60,7 @@ class Data extends AbstractHelper
     {
         return $this->scopeConfig->getValue(
             $field,
-            ScopeInterface::SCOPE_STORE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
     }
@@ -79,12 +83,12 @@ class Data extends AbstractHelper
     {
         return $this->scopeConfig->getValue(
             $field,
-            ScopeInterface::SCOPE_STORE
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
 
     /**
-     * @param null $store
+     * @param int $store
      * @return mixed
      */
     public function getApiKey($store = null)
@@ -93,7 +97,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param null $store
+     * @param int $store
      * @return mixed
      */
     public function getListId($store = null)
